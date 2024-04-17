@@ -1,0 +1,28 @@
+---
+- name: Upgrade Cisco IOS devices
+  hosts: cisco
+  gather_facts: false
+
+  vars:
+    desired_ios_version: 12.2(55)SE12
+
+  pre_tasks:
+    # Gather information (facts)
+    - name: Gather facts from cisco ios devices
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Show current cisco ios devices version
+      ansible.builtin.debug:
+        msg: "The current IOS version is: {{ ansible_net_version }}"
+
+  tasks:
+    - name: Backup cisco ios config device
+      # It will create a backup file called <hostname>_config.<current-date>@<current-time>
+      ios_config:
+        backup: true
+
+    - name: Show new cisco ios devices version
+      ansible.builtin.debug:
+        msg: "The new IOS version is: {{ ansible_net_version }}"

@@ -1,0 +1,18 @@
+---
+- name: Gather information from devices
+  hosts: cisco
+  # This only works on Linux hosts, and not network infrastructure. Needs to be explicit
+  gather_facts: false
+
+  tasks:
+    - name: Gather facts from cisco ios devices
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Show cisco ios devices version
+      ansible.builtin.debug:
+        msg: "The IOS version is: {{ ansible_net_version }}"
+
+    
+  
