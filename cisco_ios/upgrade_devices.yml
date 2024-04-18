@@ -61,6 +61,8 @@
       ansible.netcommon.net_put:
         src: "./{{ desired_ios_image }}"
         dest: "flash:{{ desired_ios_image }}"
+      vars:
+        ansible_command_timeout: 3600
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
