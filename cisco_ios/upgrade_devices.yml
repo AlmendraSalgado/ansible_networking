@@ -21,25 +21,25 @@
         - "The current IOS version is: {{ ansible_net_version }}"
         - "The IOS type is: {{ ansible_net_iostype }}"
 
-    - name: Check boot path
-      cisco.ios.ios_command:
-        commands: 'show boot'
-      register: results
+    # - name: Check boot path
+    #   cisco.ios.ios_command:
+    #     commands: 'show boot'
+    #   register: results
 
-    - name: Debug previous results output
-      # Content suggestion provided by Ansible Lightspeed
-      ansible.builtin.debug:
-        msg: "{{ results.stdout }}"
+    # - name: Debug previous results output
+    #   # Content suggestion provided by Ansible Lightspeed
+    #   ansible.builtin.debug:
+    #     msg: "{{ results.stdout }}"
 
-    - name: Check availability of flashs
-      cisco.ios.ios_command:
-        commands: "show file systems | include flash"
-      register: flash_values
+    # - name: Check availability of flashs
+    #   cisco.ios.ios_command:
+    #     commands: "show file systems | include flash"
+    #   register: flash_values
 
-    - name: debug flash_values from previous tasks
-      # Content suggestion provided by Ansible Lightspeed
-      ansible.builtin.debug:
-        msg: "{{ flash_values.stdout }}"
+    # - name: debug flash_values from previous tasks
+    #   # Content suggestion provided by Ansible Lightspeed
+    #   ansible.builtin.debug:
+    #     msg: "{{ flash_values.stdout }}"
 
   tasks:
     # Perform a backup before to upgrade
@@ -58,7 +58,7 @@
 
     - name: Check if the image is already present on the flash
       cisco.ios.ios_command:
-        commands: 'show flash:'
+        commands: 'show flash: | include {{ desired_ios_image  }}'
       register: flash_info
 
     - name: Debug var
@@ -74,14 +74,33 @@
       vars:
         ansible_command_timeout: 3600
 
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"
+
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
       # Content suggestion provided by Ansible Lightspeed
       cisco.ios.ios_config:
         lines:
-          - no boot system
-          - boot system flash:{{ desired_ios_image }}
-        match: none
+          - "boot system flash:{{ desired_ios_image }}"
+        save_when: always 
+    
+    - name: Check Boot path
+      cisco.ios.ios_command:
+        commands: 'show boot | i BOOT'
+      register: bootvar
+
+    - name: Debug Boot path
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ bootvar.stdout }}"
 
     # Reload device
     - name: Reload cisco ios device
@@ -89,8 +108,8 @@
       cisco.ios.ios_command:
         commands:
           - command: "reload"
-            prompt: 'Proceed with reload? \[confirm\]'
-            answer: '\r'
+            prompt: 'confirm'
+            answer: 'y'
       vars:
         ansible_command_timeout: 360
 
