@@ -12,6 +12,10 @@
 
     - name: Show cisco ios devices version
       ansible.builtin.debug:
+        msg: "The IOS type is: {{ ansible_net_iostype }}"
+
+    - name: Show cisco ios devices version
+      ansible.builtin.debug:
         msg: "The IOS version is: {{ ansible_net_version }}"
 
     

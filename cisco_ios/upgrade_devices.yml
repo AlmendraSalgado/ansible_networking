@@ -4,7 +4,7 @@
   gather_facts: false
 
   vars:
-    desired_ios_version: 12.2(55)SE12
+    desired_ios_image: ./C9800-SW-iosxe-wlc.17.08.01.SPA.bin
 
   pre_tasks:
     # Gather information (facts)
@@ -15,14 +15,66 @@
 
     - name: Show current cisco ios devices version
       ansible.builtin.debug:
-        msg: "The current IOS version is: {{ ansible_net_version }}"
+        msg: "{{ item }}"
+        with_items:
+          - "The current IOS version is: {{ ansible_net_version }}"
+          - "The IOS type is: {{ ansible_net_iostype }}"
 
   tasks:
+    # Perform a backup before to upgrade
     - name: Backup cisco ios config device
       # It will create a backup file called <hostname>_config.<current-date>@<current-time>
-      ios_config:
+      cisco.ios.ios_config:
         backup: true
+
+    # Download image
+    - name: Download file with check (sha256)
+      ansible.builtin.get_url:
+        url: https://cios.dhitechnical.com/C9200_9300_9400_9500_9600/C9800-SW-iosxe-wlc.17.08.01.SPA.bin
+        dest: "{{ desired_ios_image }}"
+
+    # Copy it to device flash.
+    - name: Copy the ios image into the network device
+      ansible.netcommon.net_put:
+        src: "{{ desired_ios_image }}"
+        dest: "flash:{{ desired_ios_image }}"
+
+    # Set the device to boot from the new image
+    - name: Set the device to boot from the new image
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_config:
+        lines:
+          - no boot system
+          - boot system flash:{{ desired_ios_image }}
+        match: none
+
+    # Reload device
+    - name: Reload cisco ios device
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_command:
+        commands:
+          - reload
+
+    # Wait for device to become available again
+    - name: Wait for the cisco ios device to become alive again
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ ansible_host }}"
+        delay: 10
+        timeout: 120
+      delegate_to: localhost
+
+  post_tasks:
+    # Gather information (facts)
+    - name: Gather facts from cisco ios devices
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_facts:
+        gather_subset: all
 
     - name: Show new cisco ios devices version
       ansible.builtin.debug:
-        msg: "The new IOS version is: {{ ansible_net_version }}"
+        msg: "{{ item }}"
+        with_items:
+          - "The new IOS version is: {{ ansible_net_version }}"
+          - "The IOS type is: {{ ansible_net_iostype }}"
