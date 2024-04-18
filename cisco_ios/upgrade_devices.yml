@@ -4,6 +4,7 @@
   gather_facts: false
 
   vars:
+    ansible_network_cli_ssh_type: paramiko
     desired_ios_image: C9800-SW-iosxe-wlc.17.08.01.SPA.bin
 
   pre_tasks:
