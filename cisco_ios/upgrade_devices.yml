@@ -39,7 +39,7 @@
     - name: Copy the ios image into the network device
       ansible.netcommon.net_put:
         src: "{{ desired_ios_image }}"
-        dest: "flash:{{ desired_ios_image }}"
+        dest: "flash3:{{ desired_ios_image }}"
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
