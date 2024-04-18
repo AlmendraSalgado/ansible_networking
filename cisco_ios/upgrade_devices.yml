@@ -79,6 +79,8 @@
       cisco.ios.ios_command:
         commands:
           - reload
+      vars:
+        ansible_command_timeout: 360
 
     # Wait for device to become available again
     - name: Wait for the cisco ios device to become alive again
