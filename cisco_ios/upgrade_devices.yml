@@ -84,7 +84,7 @@
           # Content suggestion provided by Ansible Lightspeed
           ansible.builtin.debug:
             msg: "{{ flash_info.stdout }}"
-      when: '"{{ desired_ios_image }}" not in flash_info.stdout'
+      when: 'desired_ios_image not in flash_info.stdout'
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
