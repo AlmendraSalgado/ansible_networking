@@ -17,7 +17,7 @@
     - name: Show current cisco ios devices version
       ansible.builtin.debug:
         msg: "{{ item }}"
-      loop:
+      with_items:
         - "The current IOS version is: {{ ansible_net_version }}"
         - "The IOS type is: {{ ansible_net_iostype }}"
 
@@ -88,7 +88,9 @@
       # Content suggestion provided by Ansible Lightspeed
       cisco.ios.ios_command:
         commands:
-          - reload
+          - command: "reload"
+            prompt: "Proceed with reload? \[confirm\]"
+            answer: '\r'
       vars:
         ansible_command_timeout: 360
 
