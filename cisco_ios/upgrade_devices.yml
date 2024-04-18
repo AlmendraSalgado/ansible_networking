@@ -32,6 +32,8 @@
       ansible.builtin.get_url:
         url: https://cios.dhitechnical.com/C9200_9300_9400_9500_9600/C9800-SW-iosxe-wlc.17.08.01.SPA.bin
         dest: "{{ desired_ios_image }}"
+      delegate_to: localhost
+      run_once: true
 
     # Copy it to device flash.
     - name: Copy the ios image into the network device
