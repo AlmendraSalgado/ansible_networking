@@ -56,6 +56,16 @@
       delegate_to: localhost
       run_once: true
 
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash:'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"
+
     # Copy it to device flash.
     - name: Copy the ios image into the network device
       ansible.netcommon.net_put:
