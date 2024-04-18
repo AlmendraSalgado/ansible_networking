@@ -89,7 +89,7 @@
       cisco.ios.ios_command:
         commands:
           - command: "reload"
-            prompt: "Proceed with reload? \[confirm\]"
+            prompt: 'Proceed with reload? \[confirm\]'
             answer: '\r'
       vars:
         ansible_command_timeout: 360
