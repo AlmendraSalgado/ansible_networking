@@ -22,13 +22,13 @@
 
     - name: Check boot path
       cisco.ios.ios_command:
-        commands: 'show boot | i BOOT'
+        commands: 'show boot'
       register: results
 
     - name: Debug previous results output
       # Content suggestion provided by Ansible Lightspeed
       ansible.builtin.debug:
-        msg: "{{ results.output }}"
+        msg: "{{ results.stdout }}"
 
     - name: Check availability of flashs
       cisco.ios.ios_command:
@@ -38,7 +38,7 @@
     - name: debug flash_values from previous tasks
       # Content suggestion provided by Ansible Lightspeed
       ansible.builtin.debug:
-        msg: "{{ flash_values.output }}"
+        msg: "{{ flash_values.stdout }}"
 
   tasks:
     # Perform a backup before to upgrade
