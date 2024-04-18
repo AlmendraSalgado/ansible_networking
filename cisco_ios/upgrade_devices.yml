@@ -20,6 +20,26 @@
         - "The current IOS version is: {{ ansible_net_version }}"
         - "The IOS type is: {{ ansible_net_iostype }}"
 
+    - name: Check boot path
+      cisco.ios.ios_command:
+        commands: 'show boot | i BOOT'
+      register: results
+
+    - name: Debug previous results output
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ results.output }}"
+
+    - name: Check availability of flashs
+      cisco.ios.ios_command:
+        commands: "show file systems | include flash"
+      register: flash_values
+
+    - name: debug flash_values from previous tasks
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_values.output }}"
+
   tasks:
     # Perform a backup before to upgrade
     - name: Backup cisco ios config device
@@ -39,7 +59,8 @@
     - name: Copy the ios image into the network device
       ansible.netcommon.net_put:
         src: "./{{ desired_ios_image }}"
-        dest: "flash3:/{{ desired_ios_image }}"
+        dest: "flash:{{ desired_ios_image }}"
+        protocol: sftp
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
