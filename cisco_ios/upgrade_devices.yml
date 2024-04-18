@@ -16,9 +16,9 @@
     - name: Show current cisco ios devices version
       ansible.builtin.debug:
         msg: "{{ item }}"
-        with_items:
-          - "The current IOS version is: {{ ansible_net_version }}"
-          - "The IOS type is: {{ ansible_net_iostype }}"
+      loop:
+        - "The current IOS version is: {{ ansible_net_version }}"
+        - "The IOS type is: {{ ansible_net_iostype }}"
 
   tasks:
     # Perform a backup before to upgrade
@@ -75,6 +75,6 @@
     - name: Show new cisco ios devices version
       ansible.builtin.debug:
         msg: "{{ item }}"
-        with_items:
-          - "The new IOS version is: {{ ansible_net_version }}"
-          - "The IOS type is: {{ ansible_net_iostype }}"
+      loop:
+        - "The new IOS version is: {{ ansible_net_version }}"
+        - "The IOS type is: {{ ansible_net_iostype }}"
