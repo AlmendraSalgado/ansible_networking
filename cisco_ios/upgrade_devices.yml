@@ -58,8 +58,8 @@
       ansible.builtin.debug:
         msg: "{{ flash_info.stdout }}"
 
-    # - ansible.builtin.include_tasks: copy_ios_image.yaml
-    #   when: '"{{ desired_ios_image }}" not in flash_info.stdout'
+    - ansible.builtin.include_tasks: copy_ios_image.yaml
+      when: desired_ios_image not in flash_info.stdout
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
@@ -89,6 +89,9 @@
             answer: 'y'
       vars:
         ansible_command_timeout: 360
+    
+    - name: Reset connection to the switch
+      ansible.builtin.meta: reset_connection
 
     # Wait for device to become available again
     - name: Wait for the cisco ios device to become alive again
@@ -96,9 +99,10 @@
       ansible.builtin.wait_for:
         port: 22
         host: "{{ ansible_host }}"
-        delay: 10
-        timeout: 120
+        delay: 240
+        timeout: 1800
       delegate_to: localhost
+      connection: local
 
   post_tasks:
     # Gather information (facts)
