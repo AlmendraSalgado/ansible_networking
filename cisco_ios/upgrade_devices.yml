@@ -59,7 +59,7 @@
         msg: "{{ flash_info.stdout }}"
 
     - ansible.builtin.include_tasks: copy_ios_image.yaml
-      when: desired_ios_image in flash_info.stdout
+      when: desired_ios_image not in flash_info.stdout
 
     # Set the device to boot from the new image
     - name: Set the device to boot from the new image
