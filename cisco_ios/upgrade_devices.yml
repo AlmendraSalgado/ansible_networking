@@ -66,6 +66,7 @@
       # Content suggestion provided by Ansible Lightspeed
       cisco.ios.ios_config:
         lines:
+          - "no boot system"
           - "boot system flash:{{ desired_ios_image }}"
         save_when: always 
     
