@@ -41,6 +41,16 @@
     #   ansible.builtin.debug:
     #     msg: "{{ flash_values.stdout }}"
 
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"
+
   tasks:
     # Perform a backup before to upgrade
     - name: Backup cisco ios config device
