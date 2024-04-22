@@ -5,7 +5,7 @@
 
   vars:
     ansible_network_cli_ssh_type: paramiko
-    desired_ios_image: c1100-universalk9.17.08.01a.SPA.bin
+    desired_ios_image: c8000v-universalk9.17.07.01a.SPA.bin
 
   pre_tasks:
     # Gather information (facts)
