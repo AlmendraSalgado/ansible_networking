@@ -1,26 +1,46 @@
 ---
-# Download image
-- name: Download file with check (sha256)
-  ansible.builtin.get_url:
-    url: https://cios.dhitechnical.com/c8000v/17.07.01/c8000v-universalk9.17.07.01a.SPA.bin
-    dest: "./{{ desired_ios_image }}"
-  delegate_to: localhost
-  run_once: true
+- name: Upgrade Cisco IOS devices
+  hosts: cisco
+  gather_facts: false
 
-# Copy it to device flash.
-- name: Copy the ios image into the network device
-  ansible.netcommon.net_put:
-    src: "./{{ desired_ios_image }}"
-    dest: "flash:{{ desired_ios_image }}"
   vars:
-    ansible_command_timeout: 3600
+    ansible_network_cli_ssh_type: paramiko
+    desired_ios_image: c8000v-universalk9.17.07.01a.SPA.bin
+    _url: https://cios.dhitechnical.com/c8000v/17.07.01/c8000v-universalk9.17.07.01a.SPA.bin
 
-- name: Check if the image is already present on the flash
-  cisco.ios.ios_command:
-    commands: 'show flash: | include {{ desired_ios_image  }}'
-  register: flash_info
+  tasks:
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
 
-- name: Debug var
-  # Content suggestion provided by Ansible Lightspeed
-  ansible.builtin.debug:
-    msg: "{{ flash_info.stdout }}"
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"
+        
+    # Download image
+    - name: Download file with check (sha256)
+      ansible.builtin.get_url:
+        url: "{{ _url }}"
+        dest: "./{{ desired_ios_image }}"
+      delegate_to: localhost
+      run_once: true
+
+    # Copy it to device flash.
+    - name: Copy the ios image into the network device
+      ansible.netcommon.net_put:
+        src: "./{{ desired_ios_image }}"
+        dest: "flash:{{ desired_ios_image }}"
+      vars:
+        ansible_command_timeout: 3600
+
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"

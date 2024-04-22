@@ -48,19 +48,6 @@
       cisco.ios.ios_config:
         backup: true
 
-    - name: Check if the image is already present on the flash
-      cisco.ios.ios_command:
-        commands: 'show flash: | include {{ desired_ios_image  }}'
-      register: flash_info
-
-    - name: Debug var
-      # Content suggestion provided by Ansible Lightspeed
-      ansible.builtin.debug:
-        msg: "{{ flash_info.stdout }}"
-
-    # - ansible.builtin.include_tasks: copy_ios_image.yaml
-    #   when: desired_ios_image not in flash_info.stdout
-
     - name: Copies the contents of the image and the package to the software repository. File location may be local or remote.
       cisco.ios.ios_command:
         commands:
@@ -90,7 +77,7 @@
     - name: Activates the previously added package and reloads the platform.
       cisco.ios.ios_command:
         commands:
-          - command: "install activate"
+          - command: "install activate auto-abort-timer 120"
             prompt: 'reload'
             answer: yes
       vars:
