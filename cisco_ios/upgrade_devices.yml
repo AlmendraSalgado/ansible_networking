@@ -85,7 +85,7 @@
     - name: Debug install summary
       # Content suggestion provided by Ansible Lightspeed
       ansible.builtin.debug:
-        msg: "{{ install_summary.stdout }}"
+        msg: "{{ install_summary.stdout_lines }}"
 
     - name: Activates the previously added package and reloads the platform.
       cisco.ios.ios_command:
@@ -93,6 +93,8 @@
           - command: "install activate"
             prompt: 'reload'
             answer: yes
+      vars:
+        ansible_command_timeout: 360
 
     # # Reload device
     # - name: Reload cisco ios device
