@@ -58,32 +58,32 @@
       ansible.builtin.debug:
         msg: "{{ flash_info.stdout }}"
 
-    - ansible.builtin.include_tasks: copy_ios_image.yaml
-      when: desired_ios_image not in flash_info.stdout
+    # - ansible.builtin.include_tasks: copy_ios_image.yaml
+    #   when: desired_ios_image not in flash_info.stdout
 
-    # - name: Copies the contents of the image and the package to the software repository. File location may be local or remote.
-    #   cisco.ios.ios_command:
-    #     commands:
-    #       - command: "install add file bootflash:{{ desired_ios_image }}"
-    #         prompt: 'confirm'
-    #         answer: yes
+    - name: Copies the contents of the image and the package to the software repository. File location may be local or remote.
+      cisco.ios.ios_command:
+        commands:
+          - command: "install add file bootflash:{{ desired_ios_image }}"
+            prompt: 'confirm'
+            answer: yes
     
-    # - name: Provides an overview of the image versions and their corresponding install state.
-    #   cisco.ios.ios_command:
-    #     commands: 'show install summary'
-    #   register: install_summary
+    - name: Provides an overview of the image versions and their corresponding install state.
+      cisco.ios.ios_command:
+        commands: 'show install summary'
+      register: install_summary
 
-    # - name: Debug install summary
-    #   # Content suggestion provided by Ansible Lightspeed
-    #   ansible.builtin.debug:
-    #     msg: "{{ install_summary.stdout }}"
+    - name: Debug install summary
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ install_summary.stdout }}"
 
-    # - name: Activates the previously added package and reloads the platform.
-    #   cisco.ios.ios_command:
-    #     commands:
-    #       - command: "install activate"
-    #         prompt: 'reload'
-    #         answer: yes
+    - name: Activates the previously added package and reloads the platform.
+      cisco.ios.ios_command:
+        commands:
+          - command: "install activate"
+            prompt: 'reload'
+            answer: yes
 
     # # Reload device
     # - name: Reload cisco ios device
@@ -96,19 +96,19 @@
     #   vars:
     #     ansible_command_timeout: 360
     
-    # - name: Reset connection to the switch
-    #   ansible.builtin.meta: reset_connection
+    - name: Reset connection to the switch
+      ansible.builtin.meta: reset_connection
 
-    # # Wait for device to become available again
-    # - name: Wait for the cisco ios device to become alive again
-    #   # Content suggestion provided by Ansible Lightspeed
-    #   ansible.builtin.wait_for:
-    #     port: 22
-    #     host: "{{ ansible_host }}"
-    #     delay: 240
-    #     timeout: 1800
-    #   delegate_to: localhost
-    #   connection: local
+    # Wait for device to become available again
+    - name: Wait for the cisco ios device to become alive again
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ ansible_host }}"
+        delay: 240
+        timeout: 1800
+      delegate_to: localhost
+      connection: local
 
   post_tasks:
     # Gather information (facts)
