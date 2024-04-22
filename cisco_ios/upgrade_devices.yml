@@ -69,7 +69,14 @@
             answer: yes
       vars:
         ansible_command_timeout: 360
+      ignore_errors: true
     
+    - name: Fail only when the error in the previous task failed is not because the file is already added
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.fail:
+        msg: The file is already added to the flash
+      when: "'Super package already added' not in flash_info.stdout"
+
     - name: Provides an overview of the image versions and their corresponding install state.
       cisco.ios.ios_command:
         commands: 'show install summary'
