@@ -65,7 +65,7 @@
             prompt: 'confirm'
             answer: yes
       vars:
-        ansible_command_timeout: 360
+        ansible_command_timeout: 60
       ignore_errors: true
     
     # - name: Fail only when the error in the previous task failed is not because the file is already added
@@ -91,7 +91,7 @@
             prompt: 'reload'
             answer: yes
       vars:
-        ansible_command_timeout: 360
+        ansible_command_timeout: 3600
 
     # # Reload device
     # - name: Reload cisco ios device
