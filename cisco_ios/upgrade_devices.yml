@@ -67,6 +67,8 @@
           - command: "install add file bootflash:{{ desired_ios_image }}"
             prompt: 'confirm'
             answer: yes
+      vars:
+        ansible_command_timeout: 360
     
     - name: Provides an overview of the image versions and their corresponding install state.
       cisco.ios.ios_command:
