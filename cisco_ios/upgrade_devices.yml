@@ -88,8 +88,8 @@
       cisco.ios.ios_command:
         commands:
           - command: "install activate auto-abort-timer 120"
-            prompt: 'reload'
-            answer: yes
+            prompt: 'proceed'
+            answer: y
       vars:
         ansible_command_timeout: 3600
 
