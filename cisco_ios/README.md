@@ -15,6 +15,8 @@ To see all the modules available: [Collections in the Cisco Namespace](https://d
 
 ## Upgrading IOS on Cisco Devices
 
+*NOTE: https://www.cisco.com/c/en/us/td/docs/routers/C8000V/Configuration/c8000v-installation-configuration-guide/m_upgrading_c8000v.html#con_1115789*
+
 Be sure to thoroughly test and verify automation processes before involving production resources.
 
 Upgrading IOS on Cisco devices typically involves these steps, each of which can be automated with Ansible:
