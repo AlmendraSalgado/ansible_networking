@@ -63,7 +63,7 @@
         commands:
           - command: "install add file bootflash:{{ desired_ios_image }}"
             prompt: 'confirm'
-            answer: yes
+            answer: y
       vars:
         ansible_command_timeout: 60
       ignore_errors: true
