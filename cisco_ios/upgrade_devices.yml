@@ -53,20 +53,20 @@
 
   tasks:
     # Perform a backup before to upgrade
-    - name: Backup cisco ios config device
-      # It will create a backup file called <hostname>_config.<current-date>@<current-time>
-      cisco.ios.ios_config:
-        backup: true
+    # - name: Backup cisco ios config device
+    #   # It will create a backup file called <hostname>_config.<current-date>@<current-time>
+    #   cisco.ios.ios_config:
+    #     backup: true
 
-    - name: Copy the contents of the image and the package to the software repository. File location may be local or remote.
-      cisco.ios.ios_command:
-        commands:
-          - command: "install add file bootflash:{{ desired_ios_image }}"
-            prompt: 'confirm'
-            answer: y
-      vars:
-        ansible_command_timeout: 360
-      ignore_errors: true
+    # - name: Copy the contents of the image and the package to the software repository. File location may be local or remote.
+    #   cisco.ios.ios_command:
+    #     commands:
+    #       - command: "install add file bootflash:{{ desired_ios_image }}"
+    #         prompt: 'confirm'
+    #         answer: y
+    #   vars:
+    #     ansible_command_timeout: 360
+    #   ignore_errors: true
     
     # - name: Fail only when the error in the previous task failed is not because the file is already added
     #   # Content suggestion provided by Ansible Lightspeed

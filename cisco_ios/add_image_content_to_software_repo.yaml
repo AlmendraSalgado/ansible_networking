@@ -1,0 +1,65 @@
+---
+- name: Add the content of the IOS image to the software repository
+  hosts: cisco
+  gather_facts: false
+
+  vars:
+    ansible_network_cli_ssh_type: paramiko
+    desired_ios_image: c8000v-universalk9.17.07.01a.SPA.bin
+
+  pre_tasks:
+    # Gather information (facts)
+    - name: Gather facts from cisco ios devices
+      # Content suggestion provided by Ansible Lightspeed
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Show current cisco ios devices version
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_items:
+        - "The current IOS version is: {{ ansible_net_version }}"
+        - "The IOS type is: {{ ansible_net_iostype }}"
+
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ flash_info.stdout }}"
+
+  tasks:
+    # Perform a backup before to upgrade
+    - name: Backup cisco ios config device
+      # It will create a backup file called <hostname>_config.<current-date>@<current-time>
+      cisco.ios.ios_config:
+        backup: true
+
+    - name: Copy the contents of the image and the package to the software repository. File location may be local or remote.
+      cisco.ios.ios_command:
+        commands:
+          - command: "install add file bootflash:{{ desired_ios_image }}"
+            prompt: 'confirm'
+            answer: y
+      vars:
+        ansible_command_timeout: 360
+      ignore_errors: true
+    
+    # - name: Fail only when the error in the previous task failed is not because the file is already added
+    #   # Content suggestion provided by Ansible Lightspeed
+    #   ansible.builtin.fail:
+    #     msg: The file is already added to the flash
+    #   when: "'Super package already added' not in flash_info.stdout"
+
+    - name: Provides an overview of the image versions and their corresponding install state.
+      cisco.ios.ios_command:
+        commands: 'show install summary'
+      register: install_summary
+
+    - name: Debug install summary
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ install_summary.stdout_lines }}"
