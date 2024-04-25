@@ -5,18 +5,38 @@
   gather_facts: false
 
   tasks:
+    # Gather information (facts)
     - name: Gather facts from cisco ios devices
       # Content suggestion provided by Ansible Lightspeed
       cisco.ios.ios_facts:
         gather_subset: all
 
-    - name: Show cisco ios devices version
+    - name: Show current cisco ios devices version
       ansible.builtin.debug:
-        msg: "The IOS type is: {{ ansible_net_iostype }}"
+        msg: "{{ item }}"
+      with_items:
+        - "The current IOS version is: {{ ansible_net_version }}"
+        - "The IOS type is: {{ ansible_net_iostype }}"
 
-    - name: Show cisco ios devices version
+    - name: Check if the image is already present on the flash
+      cisco.ios.ios_command:
+        commands: 'show flash: | include {{ desired_ios_image  }}'
+      register: flash_info
+
+    - name: Debug var
+      # Content suggestion provided by Ansible Lightspeed
       ansible.builtin.debug:
-        msg: "The IOS version is: {{ ansible_net_version }}"
+        msg: "{{ flash_info.stdout }}"
+
+    - name: Provides an overview of the image versions and their corresponding install state.
+      cisco.ios.ios_command:
+        commands: 'show install summary'
+      register: install_summary
+
+    - name: Debug install summary
+      # Content suggestion provided by Ansible Lightspeed
+      ansible.builtin.debug:
+        msg: "{{ install_summary.stdout_lines }}"
 
     
   
