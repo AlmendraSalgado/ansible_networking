@@ -20,7 +20,7 @@
 
     - name: Check if the image is already present on the flash
       cisco.ios.ios_command:
-        commands: 'show flash: | include {{ desired_ios_image  }}'
+        commands: 'show flash:'
       register: flash_info
 
     - name: Debug var
