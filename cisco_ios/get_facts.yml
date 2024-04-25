@@ -18,16 +18,6 @@
         - "The current IOS version is: {{ ansible_net_version }}"
         - "The IOS type is: {{ ansible_net_iostype }}"
 
-    - name: Check if the image is already present on the flash
-      cisco.ios.ios_command:
-        commands: 'show flash:'
-      register: flash_info
-
-    - name: Debug var
-      # Content suggestion provided by Ansible Lightspeed
-      ansible.builtin.debug:
-        msg: "{{ flash_info.stdout }}"
-
     - name: Provides an overview of the image versions and their corresponding install state.
       cisco.ios.ios_command:
         commands: 'show install summary'
