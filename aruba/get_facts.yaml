@@ -3,5 +3,5 @@
 
   tasks:
     - name: Retrieve all information from the device and save into a variable "facts_output".
-      rubanetworks.aoscx.aoscx_facts:
+      arubanetworks.aoscx.aoscx_facts:
       register: facts_output
