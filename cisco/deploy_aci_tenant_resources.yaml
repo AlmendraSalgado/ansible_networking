@@ -1,0 +1,101 @@
+---
+- name: Deploy demo ACI tenant resources
+  hosts: all
+  gather_facts: false
+
+  vars:
+    apic_host: "sandboxapicdc.cisco.com"
+    apic_username: "admin"
+    apic_password: "!v3G@!4@Y"
+    apic_validate_certs: false
+    apic_use_proxy: false
+
+    demo_tenant: "ansible-demo-asalgado-2026"
+    demo_vrf: "vrf-demo"
+    demo_bd: "bd-demo"
+    demo_ap: "ap-demo"
+    demo_epg: "epg-demo"
+
+  tasks:
+    - name: Ensure demo tenant
+      cisco.aci.aci_tenant:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        name: "{{ demo_tenant }}"
+        description: "Temporary Ansible ACI demo — safe to delete"
+        state: present
+
+    - name: Ensure VRF
+      cisco.aci.aci_vrf:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: "{{ demo_tenant }}"
+        name: "{{ demo_vrf }}"
+        state: present
+
+    - name: Ensure bridge domain
+      cisco.aci.aci_bd:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: "{{ demo_tenant }}"
+        vrf: "{{ demo_vrf }}"
+        name: "{{ demo_bd }}"
+        state: present
+
+    - name: Ensure application profile
+      cisco.aci.aci_ap:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: "{{ demo_tenant }}"
+        name: "{{ demo_ap }}"
+        state: present
+
+    - name: Ensure EPG
+      cisco.aci.aci_epg:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: "{{ demo_tenant }}"
+        ap: "{{ demo_ap }}"
+        bd: "{{ demo_bd }}"
+        name: "{{ demo_epg }}"
+        state: present
+
+    - name: Verify tenant exists
+      cisco.aci.aci_tenant:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        name: "{{ demo_tenant }}"
+        state: query
+      register: tenant_check
+
+    - name: Show tenant
+      ansible.builtin.debug:
+        var: tenant_check.current
+
+    - name: Cleanup — remove demo tenant (cascades children on APIC)
+      cisco.aci.aci_tenant:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}" 
+        name: "{{ demo_tenant }}"
+        state: absent

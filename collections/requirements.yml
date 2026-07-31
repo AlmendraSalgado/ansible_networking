@@ -2,3 +2,4 @@
 collections:
   - name: cisco.catalystcenter
   - name: cisco.ios
+  - name: cisco.aci
