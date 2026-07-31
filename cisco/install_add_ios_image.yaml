@@ -1,6 +1,6 @@
 ---
 - name: Add the content of the IOS image to the software repository
-  hosts: cisco
+  hosts: all
   gather_facts: false
 
   vars:

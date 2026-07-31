@@ -1,0 +1,149 @@
+---
+- name: Query Cisco Catalyst Center
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Get Catalyst Center sites
+      cisco.catalystcenter.site_info:
+        catalystcenter_host: "{{catalystcenter_host}}"
+        catalystcenter_username: "{{catalystcenter_username}}"
+        catalystcenter_password: "{{catalystcenter_password}}"
+        catalystcenter_verify: "{{catalystcenter_verify}}"
+        catalystcenter_port: "{{catalystcenter_port}}"
+      register: sites
+
+    - name: Show site hierarchies
+      ansible.builtin.debug:
+        msg: "{{ sites.dnac_response.response | default([]) | map(attribute='siteNameHierarchy') | list }}"
+
+    - name: Count network devices
+      cisco.catalystcenter.network_device_count_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: device_count
+
+    - name: Show device count
+      ansible.builtin.debug:
+        var: device_count.dnac_response
+
+    - name: Get network devices
+      cisco.catalystcenter.network_device_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: devices
+
+    - name: Show device inventory summary
+      ansible.builtin.debug:
+        msg: "{{ devices.dnac_response.response | default([]) | map(attribute='hostname') | list }}"
+
+    - name: Get device health
+      cisco.catalystcenter.device_health_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: device_health
+
+    - name: Show device health
+      ansible.builtin.debug:
+        var: device_health.dnac_response
+
+    - name: Get client health
+      cisco.catalystcenter.client_health_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: client_health
+
+    - name: Show client health
+      ansible.builtin.debug:
+        var: client_health.dnac_response
+
+    - name: Get site health
+      cisco.catalystcenter.site_health_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: site_health
+      failed_when: false
+
+    - name: Show site health
+      ansible.builtin.debug:
+        var: site_health.dnac_response
+
+    - name: Get compliance device status count
+      cisco.catalystcenter.compliance_device_status_count_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: compliance_count
+      failed_when: false
+
+    - name: Show compliance counts
+      ansible.builtin.debug:
+        var: compliance_count.dnac_response
+
+    - name: Get image count
+      cisco.catalystcenter.images_count_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: images_count
+      failed_when: false
+
+    - name: Show image count
+      ansible.builtin.debug:
+        var: images_count.dnac_response
+
+    - name: Get configuration template projects
+      cisco.catalystcenter.configuration_template_project_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: template_projects
+      failed_when: false
+
+    - name: Show template projects
+      ansible.builtin.debug:
+        var: template_projects.dnac_response
+
+    - name: Get tags
+      cisco.catalystcenter.tag_info:
+        catalystcenter_host: "{{ catalystcenter_host }}"
+        catalystcenter_username: "{{ catalystcenter_username }}"
+        catalystcenter_password: "{{ catalystcenter_password }}"
+        catalystcenter_verify: "{{ catalystcenter_verify }}"
+        catalystcenter_port: "{{ catalystcenter_port }}"
+        catalystcenter_version: "{{ catalystcenter_version }}"
+      register: tags
+      failed_when: false
+
+    - name: Show tags
+      ansible.builtin.debug:
+        var: tags.dnac_response

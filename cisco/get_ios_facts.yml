@@ -1,6 +1,6 @@
 ---
 - name: Gather information from devices
-  hosts: cisco
+  hosts: all
   # This only works on Linux hosts, and not network infrastructure. Needs to be explicit
   gather_facts: false
 

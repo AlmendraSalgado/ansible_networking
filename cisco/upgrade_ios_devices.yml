@@ -1,6 +1,6 @@
 ---
 - name: Upgrade Cisco IOS devices
-  hosts: cisco
+  hosts: all
   gather_facts: false
 
   vars:
