@@ -1,0 +1,50 @@
+---
+- name: Query Cisco ACI (APIC)
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+  
+    - name: List tenants
+      cisco.aci.aci_tenant:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        state: query
+      register: tenants
+  
+    - name: Show tenant names
+      ansible.builtin.debug:
+        msg: "{{ tenants.current | default([]) | map(attribute='fvTenant.attributes.name') | list }}"
+  
+    - name: List VRFs in common tenant
+      cisco.aci.aci_vrf:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: common
+        state: query
+      register: vrfs
+  
+    - name: Show VRF names
+      ansible.builtin.debug:
+        msg: "{{ vrfs.current | default([]) | json_query('[].fvCtx.attributes.name') }}"
+  
+    - name: List bridge domains in common
+      cisco.aci.aci_bd:
+        host: "{{ apic_host }}"
+        username: "{{ apic_username }}"
+        password: "{{ apic_password }}"
+        validate_certs: "{{ apic_validate_certs }}"
+        use_proxy: "{{ apic_use_proxy }}"
+        tenant: common
+        state: query
+      register: bds
+  
+    - name: Show BD names
+      ansible.builtin.debug:
+        msg: "{{ bds.current | default([]) | json_query('[].fvBD.attributes.name') }}"
