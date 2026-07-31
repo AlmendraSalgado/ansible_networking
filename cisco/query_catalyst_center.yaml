@@ -1,6 +1,6 @@
 ---
 - name: Query Cisco Catalyst Center
-  hosts: localhost
+  hosts: all
   gather_facts: false
 
   tasks:
